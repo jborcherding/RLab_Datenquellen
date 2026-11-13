@@ -1,0 +1,7 @@
+# Nur README und die Online-Fassung (docs/) werden veröffentlicht.
+# Quelltext und Fassung mit Vortragsnotizen bleiben lokal.
+/*
+!/.gitignore
+!/README.md
+!/docs/
+.DS_Store
