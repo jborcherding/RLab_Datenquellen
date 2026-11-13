@@ -2,7 +2,7 @@
 
 **Wo finde ich geeignete Daten – und wie lade ich sie in R?**
 
-Folien zu einer 90-minütigen Workshop-Sitzung im R-Lab 2026. Die Sitzung zeigt, woher sozialwissenschaftliche Daten kommen, wie man sie in R lädt und was man vor der Analyse prüfen sollte.
+Präsentationsfolien zu einer Workshop-Sitzung im R-Lab 2026. 
 
 👉 **[Präsentation öffnen](https://jborcherding.github.io/RLab_Datenquellen/)**
 
