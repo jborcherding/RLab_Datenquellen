@@ -1390,41 +1390,74 @@ R-Workshop
 <h2>Woher kommen Daten?</h2>
 <div class="columns">
 <div class="column" style="width:33%;">
-<div class="karte">
+<div class="karte fragment">
 <p><span class="kt"><a href="#/amtliche-statistik">Amtliche Statistik →</a></span></p>
 <p>Destatis, Statistische Landesämter, Eurostat, Bundeswahlleiterin</p>
 </div>
 </div><div class="column" style="width:33%;">
-<div class="karte gruen">
+<div class="karte gruen fragment">
 <p><span class="kt"><a href="#/wissenschaft">Wissenschaft →</a></span></p>
 <p>ALLBUS, GLES, ESS, EVS, SOEP, Replikationsdaten auf Zenodo oder Dataverse</p>
 </div>
 </div><div class="column" style="width:33%;">
-<div class="karte orange">
+<div class="karte orange fragment">
 <p><span class="kt"><a href="#/internationale-organisationen">Internationale Organisationen →</a></span></p>
 <p>Weltbank, OECD, ILO, WHO, Our World in Data</p>
 </div>
 </div></div>
-<div class="fragment">
 <div class="columns">
 <div class="column" style="width:50%;">
-<div class="karte lila">
+<div class="karte lila fragment">
 <p><span class="kt"><a href="#/verwaltung-und-open-data">Verwaltung und Open Data →</a></span></p>
 <p>GovData, kommunale Portale, Geodaten</p>
 </div>
 </div><div class="column" style="width:50%;">
-<div class="karte rot">
+<div class="karte rot fragment">
 <p><span class="kt"><a href="#/plattformen">Plattformen →</a></span></p>
 <p>Kaggle, GitHub: viel Auswahl, Herkunft und Lizenz kritisch prüfen</p>
 </div>
 </div></div>
-</div>
-<div class="fragment">
-<div class="karte eigene">
+<div class="karte eigene fragment">
 <p><span class="kt"><a href="#/selbst-erheben">Oder: selbst erheben →</a></span></p>
 <p>Befragung (z. B. SoSci Survey), Experiment oder Inhaltsanalyse liefern <strong>Primärdaten</strong>: passgenau, aber aufwendig. Alle Quellen oben liefern <strong>Sekundärdaten</strong>.</p>
 </div>
-</div>
+<script>
+  // Landkarte: Kachel anklicken, Detailfolie zeigen, mit „← Zur Übersicht“
+  // zurück in den gleichen Aufbaustand, nächster Klick zeigt die nächste Kachel
+  window.addEventListener("load", () => {
+    if (!window.Reveal) return;
+    const uebersicht = document.getElementById("woher-kommen-daten");
+    const details = ["amtliche-statistik", "wissenschaft", "internationale-organisationen",
+                     "verwaltung-und-open-data", "plattformen", "selbst-erheben"];
+    const letzte_kachel = uebersicht.querySelectorAll(".fragment").length - 1;
+    let stand;   // Fragment-Index der zuletzt angeklickten Kachel
+
+    // Beim Klick auf eine Kachel merken, wie weit die Übersicht aufgebaut war
+    uebersicht.querySelectorAll(".karte a").forEach(a =>
+      a.addEventListener("click", () => { stand = Reveal.getIndices().f; }));
+
+    // Zurück-Link: Übersicht im gemerkten Aufbaustand zeigen
+    document.querySelectorAll("a.zurueck").forEach(a =>
+      a.addEventListener("click", e => {
+        if (stand === undefined) return;
+        e.preventDefault();
+        const i = Reveal.getIndices(uebersicht);
+        Reveal.slide(i.h, i.v, stand);
+      }));
+
+    Reveal.on("slidechanged", e => {
+      // Alle Kacheln besucht: von der Übersicht direkt hinter die Detailfolien springen
+      if (stand === letzte_kachel && e.previousSlide === uebersicht &&
+          e.currentSlide.id === details[0]) {
+        const ziel = Reveal.getIndices(document.getElementById(details.at(-1)).nextElementSibling);
+        Reveal.slide(ziel.h, ziel.v);
+        return;
+      }
+      // Landkarte verlassen: Aufbaustand vergessen
+      if (e.currentSlide !== uebersicht && !details.includes(e.currentSlide.id)) stand = undefined;
+    });
+  });
+</script>
 </section>
 <section id="amtliche-statistik" class="slide level2">
 <h2>Amtliche Statistik</h2>
@@ -1544,7 +1577,7 @@ R-Workshop
 <li><a href="https://www.limesurvey.org">LimeSurvey</a>: Open Source, an vielen Hochschulen vorhanden</li>
 <li>Texte und Webseiten sammeln mit dem Paket rvest (wird mit dem tidyverse installiert)</li>
 </ul>
-<p><strong>Vorher klären:</strong> Datenschutz und Einwilligung, Stichprobe, ggf. Ethikvotum</p>
+<p><strong>Vorher klären:</strong> Datenschutz und Einwilligung, Stichprobe</p>
 <p><strong>Weg nach R:</strong> Export als <code>.sav</code>, <code>.csv</code> oder <code>.xlsx</code>, dann wie in Weg 1 einlesen</p>
 </div>
 </div><div class="column" style="width:46%;">
@@ -1568,9 +1601,6 @@ R-Workshop
 <div class="sprosse s4 fragment">
 <p><span class="nr">4</span> <strong>APIs</strong> <span class="bsp">Daten direkt per Internetadresse bestellen</span></p>
 </div>
-</div>
-<div class="leiter-achse fragment">
-<p><span>⬆ vom Klicken …</span><span>… zum Programmieren ⬆</span></p>
 </div>
 </section>
 <section id="setup-für-heute" class="slide level2">
@@ -1686,6 +1716,7 @@ R-Workshop
 </div>
 <div class="fragment">
 <p><strong>Vorsicht:</strong> Anders als bei <code>read_spss()</code> gibt es <strong>keine Labels</strong>. <code>find_var()</code> durchsucht nur die Spaltennamen, und was eine Spalte bedeutet, steht in der Dokumentation der Quelle.</p>
+<p><a href="https://ourworldindata.org/grapher/share-of-women-in-parliament" class="download" target="_blank">🔗 Quelle: Our World in Data, Share of women in parliament</a></p>
 </div>
 </section>
 <section id="willkommen-im-fehler-museum" class="slide level2">
@@ -1925,7 +1956,6 @@ $ X13 &lt;dbl&gt; 0.5, 0.3, 0.6, 0.7, 0.6, 0.5, 0.8, 0.8, 0.5, 0.6, 0.7, 0…</c
 <li>GLES (Wahlen)</li>
 <li>European Values Study (EVS)</li>
 <li>ISSP, Eurobarometer</li>
-<li>ALLBUS-Campus-Datei für die Lehre</li>
 </ul>
 </div>
 </div></div>
@@ -2036,7 +2066,7 @@ $ X13 &lt;dbl&gt; 0.5, 0.3, 0.6, 0.7, 0.6, 0.5, 0.8, 0.8, 0.5, 0.6, 0.7, 0…</c
 <tr class="even">
 <td><strong>GENESIS-Online, Regionalstatistik</strong></td>
 <td>amtliche Statistik, bis auf Kreisebene</td>
-<td>CSV-Download, <code>read_csv2()</code></td>
+<td>CSV-Download: <code>read_csv2()</code>, R-Paket “restatis”</td>
 </tr>
 <tr class="odd">
 <td><strong>Zenodo, Harvard Dataverse, OSF</strong></td>
@@ -2046,12 +2076,12 @@ $ X13 &lt;dbl&gt; 0.5, 0.3, 0.6, 0.7, 0.6, 0.5, 0.8, 0.8, 0.5, 0.6, 0.7, 0…</c
 <tr class="even">
 <td><strong>GovData, Open-Data-Portale</strong></td>
 <td>Verwaltungs- und Geodaten</td>
-<td>CSV, Excel, teils API</td>
+<td>CSV, Excel, teils auch API-Zugang</td>
 </tr>
 <tr class="odd">
 <td><strong>ESS, SOEP</strong></td>
 <td>Umfragen mit eigenem Portal</td>
-<td>Registrierung bzw. Nutzungsvertrag</td>
+<td>Registrierung bzw. Nutzungsvertrag, dann Datendownload wie bei GESIS</td>
 </tr>
 </tbody>
 </table>
@@ -2133,48 +2163,93 @@ $ X13 &lt;dbl&gt; 0.5, 0.3, 0.6, 0.7, 0.6, 0.5, 0.8, 0.8, 0.5, 0.6, 0.7, 0…</c
 <section id="eurostat-daten-der-eu" class="slide level2">
 <h2>{eurostat}: Daten der EU</h2>
 <div class="quiz">
-<p>Welches Land hatte 2023 die höchste Arbeitslosenquote: Deutschland, Spanien, Polen oder Schweden?</p>
+<p>Welches Land hatte 2023 die niedrigste Arbeitslosenquote: Deutschland, Spanien, Polen oder Schweden?</p>
 </div>
 <div class="fragment">
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href aria-hidden="true" tabindex="-1"></a><span class="fu">search_eurostat</span>(<span class="st">&quot;unemployment&quot;</span>) <span class="sc">|&gt;</span> <span class="fu">head</span>()   <span class="co"># Datensatz-Codes finden</span></span>
-<span id="cb16-2"><a href aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-3"><a href aria-hidden="true" tabindex="-1"></a>alq <span class="ot">&lt;-</span> <span class="fu">get_eurostat</span>(</span>
-<span id="cb16-4"><a href aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;une_rt_a&quot;</span>,</span>
-<span id="cb16-5"><a href aria-hidden="true" tabindex="-1"></a>  <span class="at">filters =</span> <span class="fu">list</span>(<span class="at">geo =</span> <span class="fu">c</span>(<span class="st">&quot;DE&quot;</span>, <span class="st">&quot;ES&quot;</span>, <span class="st">&quot;PL&quot;</span>, <span class="st">&quot;SE&quot;</span>),</span>
-<span id="cb16-6"><a href aria-hidden="true" tabindex="-1"></a>                 <span class="at">sex =</span> <span class="st">&quot;T&quot;</span>, <span class="at">age =</span> <span class="st">&quot;Y15-74&quot;</span>, <span class="at">unit =</span> <span class="st">&quot;PC_ACT&quot;</span>),</span>
-<span id="cb16-7"><a href aria-hidden="true" tabindex="-1"></a>  <span class="at">time_format =</span> <span class="st">&quot;num&quot;</span></span>
-<span id="cb16-8"><a href aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href aria-hidden="true" tabindex="-1"></a><span class="co"># 1. Suchen: Welcher Datensatz enthält die Arbeitslosenquoten?</span></span>
+<span id="cb16-2"><a href aria-hidden="true" tabindex="-1"></a><span class="fu">search_eurostat</span>(<span class="st">&quot;Arbeitslosendaten&quot;</span>, <span class="at">lang =</span> <span class="st">&quot;de&quot;</span>)</span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</div>
+<div class="fragment">
+<p>💡 <strong>Suchbegriff finden:</strong> Im <a href="https://ec.europa.eu/eurostat/databrowser/explore/all/all_themes?lang=de" target="_blank">Data Browser von Eurostat</a> stehen Titel und Code aller Datensätze.</p>
+</div>
+</section>
+<section id="eurostat-filter-festlegen" class="slide level2">
+<h2>{eurostat}: Filter festlegen</h2>
+<table class="caption-top">
+<colgroup>
+<col style="width: 32%">
+<col style="width: 24%">
+<col style="width: 44%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Filter</th>
+<th>Code</th>
+<th>Bedeutung</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>geo</code></td>
+<td><code>DE</code>, <code>ES</code>, <code>PL</code>, <code>SE</code></td>
+<td>Deutschland, Spanien, Polen, Schweden</td>
+</tr>
+<tr class="even">
+<td><code>sex</code></td>
+<td><code>T</code></td>
+<td>Insgesamt (<code>F</code> = Frauen, <code>M</code> = Männer)</td>
+</tr>
+<tr class="odd">
+<td><code>age</code></td>
+<td><code>Y15-74</code></td>
+<td>15 bis 74 Jahre</td>
+</tr>
+<tr class="even">
+<td><code>unit</code></td>
+<td><code>PC_ACT</code></td>
+<td>Anteil der Erwerbspersonen (in %)</td>
+</tr>
+</tbody>
+</table>
+<div class="klein">
+<p>💡 <strong>Nachschlagen:</strong> <a href="https://ec.europa.eu/eurostat/databrowser/view/une_rt_a/default/table?lang=de" target="_blank">Data Browser</a> oder <code>get_eurostat_dic(&quot;age&quot;, lang = &quot;de&quot;)</code></p>
+</div>
+<div class="fragment">
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href aria-hidden="true" tabindex="-1"></a><span class="co"># 2. Abrufen: nur die gefilterten Daten</span></span>
+<span id="cb17-2"><a href aria-hidden="true" tabindex="-1"></a>alq <span class="ot">&lt;-</span> <span class="fu">get_eurostat</span>(</span>
+<span id="cb17-3"><a href aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;une_rt_a&quot;</span>,</span>
+<span id="cb17-4"><a href aria-hidden="true" tabindex="-1"></a>  <span class="at">filters =</span> <span class="fu">list</span>(<span class="at">geo =</span> <span class="fu">c</span>(<span class="st">&quot;DE&quot;</span>, <span class="st">&quot;ES&quot;</span>, <span class="st">&quot;PL&quot;</span>, <span class="st">&quot;SE&quot;</span>),</span>
+<span id="cb17-5"><a href aria-hidden="true" tabindex="-1"></a>                 <span class="at">sex =</span> <span class="st">&quot;T&quot;</span>, <span class="at">age =</span> <span class="st">&quot;Y15-74&quot;</span>, <span class="at">unit =</span> <span class="st">&quot;PC_ACT&quot;</span>),</span>
+<span id="cb17-6"><a href aria-hidden="true" tabindex="-1"></a>  <span class="at">time_format =</span> <span class="st">&quot;num&quot;</span></span>
+<span id="cb17-7"><a href aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </div>
 </section>
 <section id="eurostat-auflösung" class="slide level2">
 <h2>{eurostat}: Auflösung</h2>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href aria-hidden="true" tabindex="-1"></a><span class="fu">glimpse</span>(alq)</span>
-<span id="cb17-2"><a href aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-3"><a href aria-hidden="true" tabindex="-1"></a>alq <span class="sc">|&gt;</span></span>
-<span id="cb17-4"><a href aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(TIME_PERIOD <span class="sc">==</span> <span class="dv">2023</span>) <span class="sc">|&gt;</span></span>
-<span id="cb17-5"><a href aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(values))</span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
-</div>
-<div class="fragment">
-<div class="karte orange">
-<p><span class="kt">Metadaten verstehen</span></p>
-<p>Was bedeuten <code>sex = &quot;T&quot;</code>, <code>age = &quot;Y15-74&quot;</code> und <code>unit = &quot;PC_ACT&quot;</code>? Die Antwort steht in der Datensatzbeschreibung auf der Eurostat-Seite.</p>
-</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href aria-hidden="true" tabindex="-1"></a><span class="co"># 3. Auflösung: Wer hatte 2023 die niedrigste Quote?</span></span>
+<span id="cb18-2"><a href aria-hidden="true" tabindex="-1"></a><span class="fu">glimpse</span>(alq)</span>
+<span id="cb18-3"><a href aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-4"><a href aria-hidden="true" tabindex="-1"></a>alq <span class="sc">|&gt;</span></span>
+<span id="cb18-5"><a href aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(time <span class="sc">==</span> <span class="dv">2023</span>) <span class="sc">|&gt;</span></span>
+<span id="cb18-6"><a href aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(values)</span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </section>
 <section id="gerda-wahlergebnisse-bis-auf-gemeindeebene" class="slide level2">
 <h2>{gerda}: Wahlergebnisse bis auf Gemeindeebene</h2>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href aria-hidden="true" tabindex="-1"></a><span class="co"># Welche Datensätze gibt es?</span></span>
-<span id="cb18-2"><a href aria-hidden="true" tabindex="-1"></a><span class="fu">gerda_data_list</span>()</span>
-<span id="cb18-3"><a href aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb18-4"><a href aria-hidden="true" tabindex="-1"></a><span class="co"># Bundestagswahlen auf Gemeindeebene (Name ggf. aus der Liste anpassen)</span></span>
-<span id="cb18-5"><a href aria-hidden="true" tabindex="-1"></a>btw <span class="ot">&lt;-</span> <span class="fu">load_gerda_web</span>(<span class="st">&quot;federal_muni_harm_21&quot;</span>)</span>
-<span id="cb18-6"><a href aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb18-7"><a href aria-hidden="true" tabindex="-1"></a><span class="co"># Wo steckt die Wahlbeteiligung? find_var() hilft auch hier</span></span>
-<span id="cb18-8"><a href aria-hidden="true" tabindex="-1"></a>btw <span class="sc">|&gt;</span> <span class="fu">find_var</span>(<span class="st">&quot;turnout&quot;</span>)</span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href aria-hidden="true" tabindex="-1"></a><span class="co"># Welche Datensätze gibt es?</span></span>
+<span id="cb19-2"><a href aria-hidden="true" tabindex="-1"></a><span class="fu">gerda_data_list</span>()</span>
+<span id="cb19-3"><a href aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-4"><a href aria-hidden="true" tabindex="-1"></a><span class="co"># Bundestagswahlen auf Gemeindeebene (Name ggf. aus der Liste anpassen)</span></span>
+<span id="cb19-5"><a href aria-hidden="true" tabindex="-1"></a>btw <span class="ot">&lt;-</span> <span class="fu">load_gerda_web</span>(<span class="st">&quot;federal_muni_harm_21&quot;</span>)</span>
+<span id="cb19-6"><a href aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-7"><a href aria-hidden="true" tabindex="-1"></a><span class="co"># Wo steckt die Wahlbeteiligung? find_var() hilft auch hier</span></span>
+<span id="cb19-8"><a href aria-hidden="true" tabindex="-1"></a>btw <span class="sc">|&gt;</span> <span class="fu">find_var</span>(<span class="st">&quot;turnout&quot;</span>)</span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <div class="fragment">
 <div class="karte orange">
@@ -2220,35 +2295,35 @@ $ X13 &lt;dbl&gt; 0.5, 0.3, 0.6, 0.7, 0.6, 0.5, 0.8, 0.8, 0.5, 0.6, 0.7, 0…</c
 </div>
 <div class="fragment">
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href aria-hidden="true" tabindex="-1"></a>url <span class="ot">&lt;-</span> <span class="fu">paste0</span>(</span>
-<span id="cb19-2"><a href aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;https://ec.europa.eu/eurostat/api/dissemination/sdmx/2.1/data/&quot;</span>,</span>
-<span id="cb19-3"><a href aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;une_rt_a/&quot;</span>,</span>
-<span id="cb19-4"><a href aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;A.Y15-74.PC_ACT.T.DE+ES+PL+SE&quot;</span>,</span>
-<span id="cb19-5"><a href aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;?format=SDMX-CSV&amp;startPeriod=2015&quot;</span></span>
-<span id="cb19-6"><a href aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb19-7"><a href aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-8"><a href aria-hidden="true" tabindex="-1"></a>alq_api <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(url)</span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href aria-hidden="true" tabindex="-1"></a>url <span class="ot">&lt;-</span> <span class="fu">paste0</span>(</span>
+<span id="cb20-2"><a href aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;https://ec.europa.eu/eurostat/api/dissemination/sdmx/2.1/data/&quot;</span>,</span>
+<span id="cb20-3"><a href aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;une_rt_a/&quot;</span>,</span>
+<span id="cb20-4"><a href aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;A.Y15-74.PC_ACT.T.DE+ES+PL+SE&quot;</span>,</span>
+<span id="cb20-5"><a href aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;?format=SDMX-CSV&amp;startPeriod=2015&quot;</span></span>
+<span id="cb20-6"><a href aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb20-7"><a href aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-8"><a href aria-hidden="true" tabindex="-1"></a>alq_api <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(url)</span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </div>
 </section>
 <section id="gleiche-daten-kein-zusatzpaket" class="slide level2">
 <h2>Gleiche Daten, kein Zusatzpaket</h2>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href aria-hidden="true" tabindex="-1"></a>alq_api <span class="sc">|&gt;</span></span>
-<span id="cb20-2"><a href aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(TIME_PERIOD <span class="sc">==</span> <span class="dv">2023</span>) <span class="sc">|&gt;</span></span>
-<span id="cb20-3"><a href aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(geo, TIME_PERIOD, OBS_VALUE) <span class="sc">|&gt;</span></span>
-<span id="cb20-4"><a href aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(OBS_VALUE))</span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href aria-hidden="true" tabindex="-1"></a>alq_api <span class="sc">|&gt;</span></span>
+<span id="cb21-2"><a href aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(TIME_PERIOD <span class="sc">==</span> <span class="dv">2023</span>) <span class="sc">|&gt;</span></span>
+<span id="cb21-3"><a href aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(geo, TIME_PERIOD, OBS_VALUE) <span class="sc">|&gt;</span></span>
+<span id="cb21-4"><a href aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(OBS_VALUE))</span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <div class="fragment">
 <p>Manche APIs liefern <strong>JSON</strong> statt CSV. Das Ergebnis ist dann eine <strong>Liste</strong>:</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href aria-hidden="true" tabindex="-1"></a>antwort <span class="ot">&lt;-</span> jsonlite<span class="sc">::</span><span class="fu">fromJSON</span>(<span class="fu">paste0</span>(</span>
-<span id="cb21-2"><a href aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;https://api.worldbank.org/v2/country/DE/indicator/SP.DYN.LE00.IN&quot;</span>,</span>
-<span id="cb21-3"><a href aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;?format=json&amp;date=2022&quot;</span></span>
-<span id="cb21-4"><a href aria-hidden="true" tabindex="-1"></a>))</span>
-<span id="cb21-5"><a href aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb21-6"><a href aria-hidden="true" tabindex="-1"></a>antwort[[<span class="dv">1</span>]]   <span class="co"># Metadaten zur Lieferung</span></span>
-<span id="cb21-7"><a href aria-hidden="true" tabindex="-1"></a>antwort[[<span class="dv">2</span>]]   <span class="co"># die eigentlichen Daten</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href aria-hidden="true" tabindex="-1"></a>antwort <span class="ot">&lt;-</span> jsonlite<span class="sc">::</span><span class="fu">fromJSON</span>(<span class="fu">paste0</span>(</span>
+<span id="cb22-2"><a href aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;https://api.worldbank.org/v2/country/DE/indicator/SP.DYN.LE00.IN&quot;</span>,</span>
+<span id="cb22-3"><a href aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;?format=json&amp;date=2022&quot;</span></span>
+<span id="cb22-4"><a href aria-hidden="true" tabindex="-1"></a>))</span>
+<span id="cb22-5"><a href aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-6"><a href aria-hidden="true" tabindex="-1"></a>antwort[[<span class="dv">1</span>]]   <span class="co"># Metadaten zur Lieferung</span></span>
+<span id="cb22-7"><a href aria-hidden="true" tabindex="-1"></a>antwort[[<span class="dv">2</span>]]   <span class="co"># die eigentlichen Daten</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </div>
 </section>
@@ -2256,11 +2331,11 @@ $ X13 &lt;dbl&gt; 0.5, 0.3, 0.6, 0.7, 0.6, 0.5, 0.8, 0.8, 0.5, 0.6, 0.7, 0…</c
 <h2>Wenn die API streikt …</h2>
 <p>APIs fallen aus, ändern sich oder verlangen eine Anmeldung (z. B. GENESIS mit einem persönlichen Zugangsschlüssel). Das ist <strong>normal</strong>.</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href aria-hidden="true" tabindex="-1"></a><span class="co"># Nach dem erfolgreichen Abruf: lokal sichern</span></span>
-<span id="cb22-2"><a href aria-hidden="true" tabindex="-1"></a><span class="fu">write_csv</span>(alq_api, <span class="st">&quot;daten/alq_eurostat.csv&quot;</span>)</span>
-<span id="cb22-3"><a href aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-4"><a href aria-hidden="true" tabindex="-1"></a><span class="co"># Wenn die API mal nicht will: die gesicherte Datei laden</span></span>
-<span id="cb22-5"><a href aria-hidden="true" tabindex="-1"></a>alq_api <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">&quot;daten/alq_eurostat.csv&quot;</span>)</span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href aria-hidden="true" tabindex="-1"></a><span class="co"># Nach dem erfolgreichen Abruf: lokal sichern</span></span>
+<span id="cb23-2"><a href aria-hidden="true" tabindex="-1"></a><span class="fu">write_csv</span>(alq_api, <span class="st">&quot;daten/alq_eurostat.csv&quot;</span>)</span>
+<span id="cb23-3"><a href aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-4"><a href aria-hidden="true" tabindex="-1"></a><span class="co"># Wenn die API mal nicht will: die gesicherte Datei laden</span></span>
+<span id="cb23-5"><a href aria-hidden="true" tabindex="-1"></a>alq_api <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">&quot;daten/alq_eurostat.csv&quot;</span>)</span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <div class="karte gruen fragment">
 <p><span class="kt">Reproduzierbar bleiben</span></p>
