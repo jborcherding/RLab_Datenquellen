@@ -8,3 +8,6 @@
 
 /.quarto/
 **/*.quarto_ipynb
+
+# Musterlösung nur für Lehrende (durch /* oben ohnehin ausgeschlossen)
+/musterloesung_uebungen.R

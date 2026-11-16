@@ -10,7 +10,7 @@ Präsentationsfolien zu einer Workshop-Sitzung im R-Lab 2026.
 
 ```r
 install.packages(c("tidyverse", "mariposa"))     # Grundausstattung
-install.packages(c("WDI", "eurostat", "gerda"))  # Datenzugang für diese Sitzung
+install.packages(c("WDI", "eurostat", "gerda", "httr2"))  # Datenzugang für diese Sitzung
 ```
 
 Für die Übungen braucht ihr einen Ordner `daten/` in eurem RStudio-Projekt.
