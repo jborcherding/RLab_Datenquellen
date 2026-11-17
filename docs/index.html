@@ -1310,7 +1310,12 @@ margin-right: 0; }
   const DATEN_URL    = "https://script.google.com/macros/s/AKfycbxGrlBRA86ThPe2Zg9FeDryZjkB8xOWn6KjRPCaEwVGWXv0e4ZmS3ebszCpsGpnMK83sg/exec";
 
   new QRCode(document.getElementById("qr"), { text: FORMULAR_URL, width: 230, height: 230 });
-  document.getElementById("qr-link").textContent = FORMULAR_URL.replace("https://", "");
+  // Link unter dem QR-Code klickbar machen (öffnet in neuem Tab)
+  const qr_link = document.createElement("a");
+  qr_link.href = FORMULAR_URL;
+  qr_link.target = "_blank";
+  qr_link.textContent = FORMULAR_URL.replace("https://", "");
+  document.getElementById("qr-link").appendChild(qr_link);
 
   // Wahrer Wert (Weltbank, SP.DYN.LE00.IN, Deutschland 2022)
   const WAHRER_WERT = 80.6;
