@@ -26,5 +26,5 @@ Für die Übungen braucht ihr einen Ordner `daten/` in eurem RStudio-Projekt.
 
 - **GENESIS-Tabelle 14111-0003:** © Statistisches Bundesamt (Destatis), Datenlizenz Deutschland – Namensnennung – Version 2.0
 - **Ausschnitte aus Codebuch und Fragebogen des ALLBUS 2023:** GESIS – Leibniz-Institut für Sozialwissenschaften
-- **Screenshots** der Datenportale: jeweilige Anbieter, Stand 09.11.2026
-- Alle übrigen Daten werden während der Sitzung direkt bei den Anbietern abgerufen (Our World in Data, Weltbank, Eurostat, GERDA, Afrobarometer) und liegen nicht in diesem Repository.
+- **Screenshots** der Datenportale: jeweilige Anbieter, Stand 09.11.2026 (OECD Data Explorer: Stand 18.11.2026)
+- Alle übrigen Daten werden während der Sitzung direkt bei den Anbietern abgerufen (Our World in Data, Weltbank, Eurostat, GERDA, Afrobarometer, OECD) und liegen nicht in diesem Repository.
